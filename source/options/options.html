@@ -1,11 +1,27 @@
 
 <!doctype html>
+
 <meta charset="utf-8">
 <title>Options</title>
-<link rel="stylesheet" href="chrome://global/skin/in-content/common.css">
 <link rel="stylesheet" href="options.css">
+<body>
+	<button type="button" id="add-domain-to-block">New blocked domain</button>
+	<div id="add-domain-to-block-form" hidden>
+		<form>
+			<label> Domain
+				<input id="domain">
+			</label>
+			<label> Category
+				<select id="category-select">
 
-<form id="options-form" class="detail-view-container">
-</form>
+				</select>
+			</label>
+			<button type="button" id="add-domain">Add</button>
+		</form>
+	</div>
+	<div class="table-container" >
+		<table class="domains-table"></table>
+	</div>
+	<script src="options.js"></script>
+</body>
 
-<script src="options.js"></script>

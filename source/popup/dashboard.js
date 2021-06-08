@@ -1,8 +1,8 @@
 import {saveDomains, getDomains, saveCategories} from "../options/storage"
 
 saveDomains([{
-  domain: 'github.com', 
-  category: '', 
+  domain: 'github.com',
+  category: 'Frula',
   enabled: true
 }]);
 saveCategories([{

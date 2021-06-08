@@ -3,3 +3,4 @@ yarn.lock
 distribution
 .parcel-cache
 .DS_Store
+.idea

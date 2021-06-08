@@ -12,7 +12,7 @@ categories: [
           }
     ]
 }
-  
+
 */
 
 export function saveDomains(domains){
