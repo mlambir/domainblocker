@@ -1,8 +1,21 @@
-let btn = document.querySelector("#options_button");
-console.log(saveDomains);
-saveDomains([{domain: 'github.com', category: ''}]);
+import {saveDomains, getDomains, saveCategories} from "../options/storage"
 
-btn.addEventListener("click", (e) => {
-    getDomains().then(domains => console.log(domains));
-    //browser.runtime.openOptionsPage();
+saveDomains([{
+  domain: 'github.com', 
+  category: '', 
+  enabled: true
+}]);
+saveCategories([{
+  name: "distraction",
+  color: "#CC0000",
+  icon: 'skull-crossbones',
+  enabled: true
+}])
+
+document.querySelector("#options-button").addEventListener("click", (e) => {
+    browser.runtime.openOptionsPage();
+})
+
+document.querySelector("#block-domain").addEventListener("click", (e) => {
+    browser.runtime.openOptionsPage();
 })

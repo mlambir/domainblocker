@@ -15,16 +15,16 @@ categories: [
   
 */
 
-function saveDomains(domains){
+export function saveDomains(domains){
   browser.storage.sync.set({domains});
 }
-function saveCategories(categories){
+export function saveCategories(categories){
   browser.storage.sync.set({categories});
 }
-function getDomains(){
+export function getDomains(){
   return browser.storage.sync.get('domains').then(res=>res.domains);
 }
-function getCategories(){
+export function getCategories(){
   return browser.storage.sync.get("categories").then(res=>res.categories);
 }
 
