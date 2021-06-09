@@ -1,7 +1,7 @@
 import {saveDomains, getDomains, saveCategories, getCategories} from "../options/storage"
 
 document.querySelector("#options-button").addEventListener("click", (e) => {
-    browser.runtime.openOptionsPage();
+    browser.tabs.create({url: '../options/options.html'});
 })
 
 document.querySelector("#block-domain").addEventListener("click", (e) => {

@@ -1,0 +1,49 @@
+/* open-sans-condensed-300 - latin */
+@font-face {
+	font-family: 'Open Sans Condensed';
+	font-style: normal;
+	font-weight: normal;
+	src: local(''),
+	url('../static/fonts/open-sans-condensed.woff2') format('woff2');
+}
+
+/* open-sans-regular - latin */
+@font-face {
+	font-family: 'Open Sans';
+	font-style: normal;
+	font-weight: 400;
+	src: local(''),
+	url('../static/fonts/open-sans.woff2') format('woff2'); /* Chrome 26+, Opera 23+, Firefox 39+ */
+}
+
+body{
+	padding: 20px
+}
+
+*{
+	font-family: 'Open Sans';
+	font-style: normal;
+	font-weight: 400;
+}
+
+h1{
+	font-family: 'Open Sans Condensed';
+}
+
+#add-domain-to-block, #add-new-category{
+	margin: 10px 0px 10px 0px;
+	float: right;
+}
+
+.categories-table, .domains-table{
+	width: 100%;
+}
+
+.dataTable-top {
+	display: flex;
+	align-items: center;
+}
+
+.dataTable-input{
+	margin: 5px;
+}

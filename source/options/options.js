@@ -74,7 +74,7 @@ function createCategoriesTable() {
 			}
 			table.rows().remove('all');
 			table.insert(newData);
-
+			table.resi
 		});
 	}
 }

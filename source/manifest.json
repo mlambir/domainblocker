@@ -20,7 +20,7 @@
 	],
 	"options_ui": {
 		"chrome_style": true,
-		"page": "options/options_tabs.html"
+		"page": "options/options.html"
 	},
   "content_scripts": [
     {
