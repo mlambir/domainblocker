@@ -1,3 +1,51 @@
-.domainblocker__blocked{
-  border: 2px solid red;
+.domainblocker__dialog{
+  position: fixed;
+  background-color: #f0f0f0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 5%;
+  text-align: center;
+  z-index: 9999999;
+}
+
+.domainblocker__dialog > *{
+  font-family: verdana, arial, helvetica;
+  color: #2c2c2c;
+  margin: 0 0 5% 0;
+}
+
+.domainblocker__dialog > h1{
+  font-size: 5em;
+}
+
+.domainblocker__dialog > span{
+  font-size: 2em;
+  padding: 5%;
+}
+
+.domainblocker__dialog > .domainblocker__buttons{
+  display: flex;
+  justify-content: space-around;
+  align-items: baseline;
+  margin-top: 5%;
+}
+
+.domainblocker__dialog > .domainblocker__buttons > a,button{
+  padding: 10px 40px;
+}
+
+.domainblocker__dialog > .domainblocker__buttons > button{
+  background-color: #DEFBD8;
+  border: 2px solid green;
+  font-weight: bold;
+  font-size: 2em;
+  color: green;
+  border-radius: 4px;
+  cursor:pointer;
+}
+
+.domainblocker__dialog > .domainblocker__buttons > a{
+  color: #CC0000;
 }
