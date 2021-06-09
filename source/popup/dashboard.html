@@ -1,45 +1,45 @@
 
-<!DOCTYPE html>
-
-<html>
+<!doctype html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="../../node_modules/@fortawesome/fontawesome-free/css/all.css">
     <link rel="stylesheet" href="./dashboard.css"/>
   </head>
+  <body>
+    <div class="container">
+      <div class="d-flex justify-content-between">
+        <h1>Domain Blocker</h1>
+        <button type="button" class="btn btn-light" id="options-button"><i class="fa fa-cogs"></i></button>
+      </div>
+      <div class="row">
+        <button type="button" class="btn btn-light" id="block-domain">Block this domain</button>
+      </div>
+      <div hidden id="add-domain" class="row">
+        <div class="mb-3">
+          <label for="categorySelect" class="form-label">Category</label>
+          <select name="categorySelect" class="form-control" id="category-select">
 
-<body>
-  <div class="container">
-      <div class="row">
-        <div class="one column">
-          <h1>Domain Blocker</h1>
-        </div>
-      </div> 
-    <button type="button" id="options-button">Options</button>
-    <button type="button" id="block-domain">Block this domain</button>
-    
-    <div hidden id="add-domain">
-      <div class="row">
-        <div class="one column">
-          <label for="categorySelect">Category</label>
-          <select name="categorySelect" id="category-select">
-            
           </select>
         </div>
-        <div class="one column">
-          <label for="domainInput">Domain</label>
-          <input name="domainInput" type="text" value="" id="domain-input">
+        <div class="mb-3">
+          <label for="domainInput" class='form-label'>Domain</label>
+          <input name="domainInput" type="text" value="" id="domain-input" class="form-control">
         </div>
-        <div class="one column">
-          <button type="button" id="add-domain" class="button-primary">Block</button>  
-        </div>
+        <button type="button" id="add-domain" class="btn btn-primary">Block</button>
       </div>
     </div>
-  </div>
 
-  <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
-  <script src="dashboard.js"></script>
-</body>
+    <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="dashboard.js"></script>
+  </body>
+</html>
+
+<html>
+
+
 
 </html>
 

@@ -1,18 +1,5 @@
 import {saveDomains, getDomains, saveCategories, getCategories} from "../options/storage"
 
-saveDomains([{
-  domain: 'github.com',
-  category: 'Frula',
-  enabled: true
-}]);
-
-saveCategories([{
-  name: "distraction",
-  color: "#CC0000",
-  icon: 'skull-crossbones',
-  enabled: true
-}])
-
 document.querySelector("#options-button").addEventListener("click", (e) => {
     browser.runtime.openOptionsPage();
 })
@@ -28,12 +15,22 @@ document.querySelector("#block-domain").addEventListener("click", (e) => {
 })
 
 
-document.onLoad = () =>{
-  getCategories().then(categories=>{
+document.querySelector("#add-domain").addEventListener("click", (e) => {
+  getDomains().then(domains=>{
+    let domain = {domain: document.getElementById('domain-input').value,
+                  category: document.getElementById('category-select').value,
+                  enabled:true};
+    domains.push(domain);
+    saveDomains(domains)
+  })
+})
+
+
+
+window.onload = () =>{
+  getCategories().then((categories)=>{
     let categorySelect = document.getElementById("category-select");
-    console.log(categories);
     categories.forEach(category => {
-      console.log("cat");
       let o = document.createElement('option');
       o.innerText = category.name;
       o.value = category.name;
