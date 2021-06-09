@@ -1,4 +1,4 @@
-import {getCategories, getDomains, saveDomains} from "./storage";
+import {getCategories, getDomains, saveCategories, saveDomains} from "./storage";
 import {DataTable} from "simple-datatables"
 
 
@@ -19,6 +19,15 @@ function getDomainData() {
 	return {
 		domain: document.getElementById("domain").value,
 		category: document.getElementById("category-select").value,
+		enabled: "true"
+	}
+}
+
+function getCategoryData() {
+	return {
+		name: document.getElementById("category-name").value,
+		color: document.getElementById("category-color").value,
+		icon: document.getElementById("category-icon").value,
 		enabled: "true"
 	}
 }
@@ -75,6 +84,11 @@ function showDomainAlreadyExistsError(domain) {
 	document.querySelector("#error-container").appendChild(error);
 }
 
+function showCategoryAlreadyExistsError(category) {
+	const error = document.createTextNode(`The category: ${category.name} already exists!`);
+	document.querySelector("#error-container").appendChild(error);
+}
+
 const updateDomainsTable = createDomainsTable();
 const updateCategoriesTable = createCategoriesTable();
 
@@ -87,11 +101,25 @@ function createNewDomain(domainData) {
 		saveDomains(domains).then(() => updateDomainsTable());
 	})
 }
+
+function createNewCategory(categoryData) {
+	getCategories().then((categories) => {
+		categories.map((category) => category.name).includes(categoryData.name) ?
+			showCategoryAlreadyExistsError(categoryData):
+			categories.push(categoryData);
+
+		saveCategories(categories).then(() => {
+			updateCategoriesTable();
+			addCategorySelectOptions();
+		});
+	})
+}
+
 function updateTables() {
 	updateDomainsTable();
 	updateCategoriesTable();
 }
-
+updateTables()
 document.getElementById("add-domain-to-block").addEventListener("click", (e) => {
 	addCategorySelectOptions();
 });
@@ -99,6 +127,11 @@ document.getElementById("add-domain-to-block").addEventListener("click", (e) => 
 document.getElementById("add-domain").addEventListener("click", (e) => {
 	const domainData = getDomainData();
 	createNewDomain(domainData)
+});
+
+document.getElementById("add-category").addEventListener("click", (e) => {
+	const categoryData = getCategoryData();
+	createNewCategory(categoryData)
 });
 
 
