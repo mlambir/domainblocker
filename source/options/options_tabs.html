@@ -1,0 +1,75 @@
+
+<!doctype html>
+<html lang="en">
+	<meta charset="utf-8">
+	<head>
+		<title>Options</title>
+		<link href="../../node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet" >
+	</head>
+
+	<body>
+		<ul class="nav nav-tabs" id="myTab" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active" id="domains-tab" data-bs-toggle="tab" data-bs-target="#domains" type="button"
+							role="tab" aria-controls="domains" aria-selected="true">Domains</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories" type="button"
+						role="tab" aria-controls="categories" aria-selected="false">Categories</button>
+			</li>
+		</ul>
+		<div class="tab-content" id="myTabContent">
+			<div class="tab-pane fade show active" id="domains" role="tabpanel" aria-labelledby="domains-tab">
+				<button type="button" id="add-domain-to-block" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-domain-modal">
+					Add domain
+				</button>
+				<div class="table-container" >
+					<table class="domains-table"></table>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="categories-tab">
+				<div class="table-container" >
+					<table class="categories-table"></table>
+				</div>
+			</div>
+		</div>
+
+
+		<script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+		<script src="options.js"></script>
+	</body>
+
+	<!-- Modal -->
+	<div class="modal fade" id="add-domain-modal" tabindex="-1" aria-labelledby="add-domain-modal-label" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="add-domain-modal-label">Add domain to block</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div id="add-domain-to-block-form">
+						<form>
+							<label class="form-label"> Domain
+								<input id="domain" class="form-control">
+							</label>
+							<label class="form-label"> Category
+								<select id="category-select" class="form-control"></select>
+							</label>
+							<button type="button" id="new-category-for-domain" class="btn btn-primary">
+								<p><i class="fa fa-plus" aria-hidden="false"></i></p>
+							</button>
+							<button type="button" id="add-domain">Add</button>
+						</form>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Save changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</html>

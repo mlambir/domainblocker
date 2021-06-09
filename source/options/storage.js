@@ -1,7 +1,11 @@
 /*
 {
 domains: [
-    {domain: something, category: something, enabled:true}
+    {
+    	domain: something,
+    	category: something,
+    	enabled:true
+    }
 ],
 categories: [
           {
