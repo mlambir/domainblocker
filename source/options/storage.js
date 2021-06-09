@@ -20,10 +20,10 @@ categories: [
 */
 
 export function saveDomains(domains){
-  browser.storage.sync.set({domains});
+  return browser.storage.sync.set({domains});
 }
 export function saveCategories(categories){
-  browser.storage.sync.set({categories});
+  return browser.storage.sync.set({categories});
 }
 export function getDomains(){
   return browser.storage.sync.get('domains').then(res=>res.domains);

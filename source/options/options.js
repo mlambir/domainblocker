@@ -15,20 +15,6 @@ function addCategorySelectOptions() {
 	})
 }
 
-function toggleAddDomainToBlockFormVisibility() {
-	const form =  document.getElementById("add-domain-to-block-form")
-	form.hasAttribute("hidden") ?
-		form.removeAttribute("hidden") :
-		form.setAttribute("hidden", '');
-}
-
-function toggleAddCategoryFormVisibility() {
-	const form =  document.getElementById("add-category-form")
-	form.hasAttribute("hidden") ?
-		form.removeAttribute("hidden") :
-		form.setAttribute("hidden", '');
-}
-
 function getDomainData() {
 	return {
 		domain: document.getElementById("domain").value,
@@ -37,62 +23,83 @@ function getDomainData() {
 	}
 }
 
-function updateDomainTable() {
-	getDomains().then(domains => {
-		if (!domains.length) {
-			return
-		}
-		let table = new DataTable(".domains-table", {
-			data: {
+
+function createDomainsTable() {
+	const table = new DataTable(".domains-table", {
+		data: {
+			headings: ["Domains", "Category", "Enabled"],
+			data: []
+		},
+	})
+	return function () {
+		getDomains().then(domains => {
+			if (!domains.length) {
+				return
+			}
+			const newData = {
 				headings: ["Domains", "Category", "Enabled"],
 				data: domains.map(item => Object.values(item))
-			},
-		})
-	});
+			}
+			table.rows().remove('all');
+			table.insert(newData);
+
+		});
+	}
 }
 
-function updateCategoriesTable() {
-	getCategories().then(categories => {
-		if (!categories.length) {
-			return
-		}
-		let table = new DataTable(".categories-table", {
-			data: {
+function createCategoriesTable() {
+	const table = new DataTable(".categories-table", {
+		data: {
+			headings: ["Name", "Color", "Icon", "Enabled"],
+			data: []
+		},
+	})
+	return function () {
+		getCategories().then(categories => {
+			if (!categories.length) {
+				return
+			}
+			const newData = {
 				headings: ["Name", "Color", "Icon", "Enabled"],
 				data: categories.map(item => Object.values(item))
-			},
-		})
-	});
-}
+			}
+			table.rows().remove('all');
+			table.insert(newData);
 
-function updateTables() {
-	updateDomainTable();
-	updateCategoriesTable();
+		});
+	}
 }
 
 function showDomainAlreadyExistsError(domain) {
 	const error = document.createTextNode(`The domain: ${domain.domain} is already blocked!`);
 	document.querySelector("#error-container").appendChild(error);
 }
-updateTables();
+
+const updateDomainsTable = createDomainsTable();
+const updateCategoriesTable = createCategoriesTable();
+
+function createNewDomain(domainData) {
+	getDomains().then((domains) => {
+		domains.map((domain) => domain.domain).includes(domainData.domain) ?
+			showDomainAlreadyExistsError(domainData):
+			domains.push(domainData);
+
+		saveDomains(domains).then(() => updateDomainsTable());
+	})
+}
+function updateTables() {
+	updateDomainsTable();
+	updateCategoriesTable();
+}
 
 document.getElementById("add-domain-to-block").addEventListener("click", (e) => {
 	addCategorySelectOptions();
 });
 
-document.querySelector("#add-new-category").addEventListener("click", (e) => {
-	toggleAddCategoryFormVisibility();
-});
-
-document.querySelector("#add-domain").addEventListener("click", (e) => {
+document.getElementById("add-domain").addEventListener("click", (e) => {
 	const domainData = getDomainData();
-	getDomains().then((domains) => {
-		domains.map((domain) => domain.domain).include(domainData.domain) ?
-			showDomainAlreadyExistsError(domainData):
-			domains.push(domainData);
-		saveDomains(domains);
-	})
-	updateDomainTable()
-	toggleAddDomainToBlockFormVisibility();
+	createNewDomain(domainData)
 });
 
+
+//saveDomains([])
