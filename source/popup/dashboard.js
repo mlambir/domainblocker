@@ -1,7 +1,7 @@
 import {saveDomains, getDomains, saveCategories, getCategories} from "../options/storage"
 
 document.querySelector("#options-button").addEventListener("click", (e) => {
-    browser.runtime.openOptionsPage();
+    browser.tabs.create({url: '../options/options.html'});
 })
 
 document.querySelector("#block-domain").addEventListener("click", (e) => {
@@ -17,8 +17,8 @@ document.querySelector("#block-domain").addEventListener("click", (e) => {
 
 document.querySelector("#add-domain").addEventListener("click", (e) => {
   getDomains().then(domains=>{
-    let domain = {domain: document.getElementById('domain-input').value, 
-                  category: document.getElementById('category-select').value, 
+    let domain = {domain: document.getElementById('domain-input').value,
+                  category: document.getElementById('category-select').value,
                   enabled:true};
     domains.push(domain);
     saveDomains(domains)
