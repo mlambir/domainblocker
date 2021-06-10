@@ -18,11 +18,14 @@ function showDialog(url){
   }
 }
 
-getDomains().then(domains=>{
 
-  function replaceText (node) {
+getDomains().then(domains=>{
+  function blockLink(node) {
     if (node.nodeName === "A") {
       let url = new URL(node.href);
+      if(url.hostname.endsWith(window.location.hostname)){
+        return;
+      }
       if(domains.map(d=>d.domain).includes(url.hostname)){
         if(!node.classList.contains('domainblocker__blocked')){
           node.classList.add('domainblocker__blocked');
@@ -62,7 +65,7 @@ getDomains().then(domains=>{
 
 // Start the recursion from the body tag.
 for(let element of document.getElementsByTagName('a')){
-replaceText(element);
+blockLink(element);
 };
 
 
