@@ -1,4 +1,4 @@
-import {getDomains} from "../options/storage"
+import {getDomainsFull} from "../options/storage"
 import tinycolor from "tinycolor2"
 
 function showDialog(url){
@@ -19,46 +19,40 @@ function showDialog(url){
 }
 
 
-getDomains().then(domains=>{
+getDomainsFull().then(domains=>{
   function blockLink(node) {
     if (node.nodeName === "A") {
       let url = new URL(node.href);
-      if(url.hostname.endsWith(window.location.hostname)){
+      if(url.hostname == "" || url.hostname.endsWith(window.location.hostname)){
         return;
       }
-      if(domains.map(d=>d.domain).includes(url.hostname)){
-        if(!node.classList.contains('domainblocker__blocked')){
-          node.classList.add('domainblocker__blocked');
-          node.onclick = function(e){
-            e.preventDefault();
-            showDialog(node.href); 
-            return false;
-          };
-          let color = "red";
-          styles = `;
-            background: 
-              repeating-linear-gradient(
-                135deg,
-                ${tinycolor(color).lighten(20).toHexString()} ,
-                ${tinycolor(color).lighten(20).toHexString()} 2px,
-                #00000000 2px,
-                #00000000 10px
-              ),
-              repeating-linear-gradient(
-                45deg,
-                ${tinycolor(color).lighten(20).toHexString()} ,
-                ${tinycolor(color).lighten(20).toHexString()} 2px,
-                ${tinycolor(color).lighten(40).toHexString()} 2px,
-                ${tinycolor(color).lighten(40).toHexString()} 10px
-              );
-            border: 4px solid ${tinycolor(color).darken(20).toHexString()};
-            color: ${tinycolor(color).darken(30).toHexString()};
-            border-radius: 10px;
-            padding: 5px 10px;
-            `;
 
-          node.style += styles;
-        }
+      let d = domains.find(dom => dom && dom.domain && url.hostname.endsWith(dom.domain));
+      if(!d) return;
+      console.log([d.domain, url.hostname])
+      if(!node.classList.contains('domainblocker__blocked')){
+        node.classList.add('domainblocker__blocked');
+        node.onclick = function(e){
+          e.preventDefault();
+          showDialog(node.href); 
+          return false;
+        };
+        let color = d.color || "#000000";
+        let icon = d.icon || "circle-xmark";
+
+        styles = `;
+          background: ${tinycolor(color).lighten(40).setAlpha(.7).toRgbString()};
+          border-right: 4px solid ${tinycolor(color).darken(20).toHexString()};
+          border-left: 4px solid ${tinycolor(color).darken(20).toHexString()};
+          color: ${tinycolor(color).darken(30).toHexString()};
+          padding: 0 10px;
+          `;
+
+        node.style += styles;
+        node.innerHTML = `<svg class="domainblocker__icon">
+          <use xlink:href="${browser.extension.getURL("./static/solid.svg")}#${icon}" fill="currentColor"></use>
+        </svg>` + node.innerHTML;
+
       }
     }
   }
