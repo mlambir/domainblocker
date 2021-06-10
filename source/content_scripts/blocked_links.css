@@ -49,3 +49,11 @@
 .domainblocker__dialog > .domainblocker__buttons > a{
   color: #CC0000;
 }
+
+svg.domainblocker__icon{
+  height: 1em;
+  width: 1em;
+  margin: 0 1em 0 0;
+  top: .125em;
+  position: relative;
+}
