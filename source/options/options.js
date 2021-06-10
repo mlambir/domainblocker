@@ -1,6 +1,21 @@
 import {getCategories, getDomains, saveCategories, saveDomains} from "./storage";
 import {DataTable} from "simple-datatables"
 
+function getActionButtonForCategory(data, cell, row) {
+	return  `<div>
+				<button class="btn btn-light"><i class="fa fa-pencil-alt"></i></button>
+			 	<button class="btn btn-light"><i class="fa fa-trash"></i></button>
+			 </div>`
+}
+
+function getActionButtonForDomain(data, cell, row) {
+	return  `<div>
+				<button class="btn btn-light"><i class="fa fa-pencil-alt"></i></button>
+				<button class="btn btn-light"><i class="fa fa-trash"></i></button>
+				</div>`
+
+}
+
 
 function addCategorySelectOptions() {
 	getCategories().then(categories => {
@@ -36,7 +51,7 @@ function getCategoryData() {
 function createDomainsTable() {
 	const table = new DataTable(".domains-table", {
 		data: {
-			headings: ["Domains", "Category", "Enabled"],
+			headings: ["Domains", "Category", "Enabled", "Actions"],
 			data: []
 		},
 	})
@@ -46,8 +61,12 @@ function createDomainsTable() {
 				return
 			}
 			const newData = {
-				headings: ["Domains", "Category", "Enabled"],
-				data: domains.map(item => Object.values(item))
+				headings: ["Domains", "Category", "Enabled", "Actions"],
+				data: domains.map(domain => {
+					let rowData = Object.values(domain);
+					rowData.push(getActionButtonForDomain(domain));
+					return rowData;
+				})
 			}
 			table.rows().remove('all');
 			table.insert(newData);
@@ -59,7 +78,7 @@ function createDomainsTable() {
 function createCategoriesTable() {
 	const table = new DataTable(".categories-table", {
 		data: {
-			headings: ["Name", "Color", "Icon", "Enabled"],
+			headings: ["Name", "Color", "Icon", "Enabled", "Actions"],
 			data: []
 		},
 	})
@@ -69,12 +88,15 @@ function createCategoriesTable() {
 				return
 			}
 			const newData = {
-				headings: ["Name", "Color", "Icon", "Enabled"],
-				data: categories.map(item => Object.values(item))
+				headings: ["Name", "Color", "Icon", "Enabled", "Actions"],
+				data: categories.map(category => {
+					let rowData = Object.values(category);
+					rowData.push(getActionButtonForCategory(category));
+					return rowData;
+				})
 			}
 			table.rows().remove('all');
 			table.insert(newData);
-			table.resi
 		});
 	}
 }
