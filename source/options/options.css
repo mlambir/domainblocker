@@ -47,3 +47,16 @@ h1{
 .dataTable-input{
 	margin: 5px;
 }
+
+.dataTable-pagination-list{
+	list-style-type: none;
+	display: flex;
+	width: 10%;
+	justify-content: space-around;
+}
+
+.dataTable-info{
+	color: gray;
+	font-size: small;
+	margin-top: 5px;
+}
