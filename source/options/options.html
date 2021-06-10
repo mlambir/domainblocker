@@ -33,7 +33,8 @@
 				</div>
 			</div>
 			<div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="categories-tab">
-				<button type="button" id="add-new-category" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#add-category-modal">
+				<button type="button" id="add-category" class="btn btn-light" data-bs-toggle="modal"
+						data-bs-target="#add-category-modal">
 					Add Category
 				</button>
 				<div class="table-container" >
@@ -57,10 +58,10 @@
 						<div id="add-domain-to-block-form">
 							<form>
 								<label class="form-label"> Domain
-									<input id="domain" class="form-control">
+									<input id="domain-to-add" class="form-control">
 								</label>
 								<label class="form-label"> Category
-									<select id="category-select" class="form-control"></select>
+									<select id="add-domain-category-select" class="form-control category-select"></select>
 								</label>
 								<button type="button" id="new-category-for-domain" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#add-category-modal">
 									<i class="fa fa-plus"></i>
@@ -70,7 +71,67 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
-						<button type="button" id="add-domain" class="btn btn-light" data-bs-dismiss="modal">Save</button>
+						<button type="button" id="save-domain" class="btn btn-light" data-bs-dismiss="modal"
+								data-action="add">Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Edit domain modal -->
+		<div class="modal fade" id="edit-domain-modal" tabindex="-1" aria-labelledby="add-domain-modal-label" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="edit-domain-modal-label">Edit domain</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div id="edit-domain-to-block-form">
+							<form>
+								<label class="form-label"> Domain
+									<input id="domain-to-edit" class="form-control">
+								</label>
+								<label class="form-label"> Category
+									<select id="edit-domain-category-select" class="form-control category-select"></select>
+								</label>
+								<button type="button" id="new-category-for-domain" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#add-category-modal">
+									<i class="fa fa-plus"></i>
+								</button>
+							</form>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+						<button type="button" id="save-edited-domain" class="btn btn-light" data-bs-dismiss="modal">Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Delete domain modal -->
+		<div class="modal fade" id="delete-domain-modal" tabindex="-1" aria-labelledby="add-domain-modal-label" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="delete-domain-modal-label">Delete domain</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div id="delete-domain-to-block-form">
+							<form>
+								<label class="form-label"> Domain
+									<input id="domain-to-delete" class="form-control" disabled>
+								</label>
+								<label class="form-label"> Category
+									<select id="delete-domain-category-select" class="form-control category-select" disabled></select>
+								</label>
+							</form>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+						<button type="button" id="delete-domain" class="btn btn-light" data-bs-dismiss="modal">Save</button>
 					</div>
 				</div>
 			</div>
@@ -88,20 +149,83 @@
 						<div id="add-category-to-block-form">
 							<form>
 								<label class="form-label"> Name
-									<input id="category-name" class="form-control">
+									<input id="add-category-name" class="form-control">
 								</label>
 								<label class="form-label"> Color
-									<input id="category-color" class="form-control" type="color">
+									<input id="add-category-color" class="form-control" type="color">
 								</label>
 								<label class="form-label"> Icon
-									<input id="category-icon" class="form-control">
+									<input id="add-category-icon" class="form-control">
 								</label>
 							</form>
 						</div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
-						<button type="button" id="add-category" class="btn btn-light" data-bs-dismiss="modal">Save</button>
+						<button type="button" id="save-category" class="btn btn-light" data-bs-dismiss="modal"
+								data-action="add">Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Edit new category modal -->
+		<div class="modal fade" id="edit-category-modal" tabindex="-1" aria-labelledby="add-category-modal-label" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="edit-category-modal-label">Edit category</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div id="edit-category-to-block-form">
+							<form>
+								<label class="form-label"> Name
+									<input id="edit-category-name" class="form-control">
+								</label>
+								<label class="form-label"> Color
+									<input id="edit-category-color" class="form-control" type="color">
+								</label>
+								<label class="form-label"> Icon
+									<input id="edit-category-icon" class="form-control">
+								</label>
+							</form>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+						<button type="button" id="save-edited-category" class="btn btn-light" data-bs-dismiss="modal">Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Delete category modal -->
+		<div class="modal fade" id="delete-category-modal" tabindex="-1" aria-labelledby="add-category-modal-label" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="delete-category-modal-label">Edit category</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div id="delete-category-to-block-form">
+							<form>
+								<label class="form-label"> Name
+									<input id="delete-category-name" class="form-control" disabled>
+								</label>
+								<label class="form-label"> Color
+									<input id="delete-category-color" class="form-control" type="color" disabled>
+								</label>
+								<label class="form-label"> Icon
+									<input id="delete-category-icon" class="form-control" disabled>
+								</label>
+							</form>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+						<button type="button" id="delete-category" class="btn btn-light" data-bs-dismiss="modal">Save</button>
 					</div>
 				</div>
 			</div>

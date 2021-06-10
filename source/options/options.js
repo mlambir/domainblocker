@@ -1,52 +1,107 @@
 import {getCategories, getDomains, saveCategories, saveDomains} from "./storage";
 import {DataTable} from "simple-datatables"
+function getElementById(id) {
+	return document.getElementById(id);
+}
 
-function getActionButtonForCategory(data, cell, row) {
+function getElementsByClassName(className) {
+	return document.getElementsByClassName(className);
+}
+
+function getActionButtonForDomain(domain) {
 	return  `<div>
-				<button class="btn btn-light"><i class="fa fa-pencil-alt"></i></button>
-			 	<button class="btn btn-light"><i class="fa fa-trash"></i></button>
+				<button data-domain-name="${domain.domain}" data-domain-category="${domain.category}" class="btn btn-light edit-domain"
+				 data-bs-toggle="modal" data-bs-target="#edit-domain-modal">
+				 	<i class="fa fa-pencil-alt"></i>
+				 </button>
+				<button data-domain-name="${domain.domain}" data-domain-category="${domain.category}" class="btn btn-light delete-domain"
+				data-bs-toggle="modal" data-bs-target="#delete-domain-modal">
+					<i class="fa fa-trash"></i>
+				</button>
+			</div>`
+}
+
+function getActionButtonForCategory(category) {
+	return  `<div>
+				<button data-category-name="${category.name}" data-category-color="${category.color}" data-category-icon="${category.icon}" class="btn btn-light edit-category"
+				 data-bs-toggle="modal" data-bs-target="#edit-category-modal">
+					<i class="fa fa-pencil-alt"></i>
+				</button>
+			 	<button data-category-name="${category.name}" data-category-color="${category.color}" data-category-icon="${category.icon}" class="btn btn-light delete-category"
+				 data-bs-toggle="modal" data-bs-target="#delete-category-modal">
+					<i class="fa fa-trash"></i>
+				</button>
 			 </div>`
 }
 
-function getActionButtonForDomain(data, cell, row) {
-	return  `<div>
-				<button class="btn btn-light"><i class="fa fa-pencil-alt"></i></button>
-				<button class="btn btn-light"><i class="fa fa-trash"></i></button>
-				</div>`
-
-}
-
-
 function addCategorySelectOptions() {
 	getCategories().then(categories => {
-		const select = document.getElementById('category-select');
-		select.innerHTML = '';
-		for(let category of categories) {
-			let option = document.createElement('option');
-			option.appendChild( document.createTextNode(category.name) );
-			option.value = category.name;
-			select.appendChild(option);
-		}
+		const selectList = [...getElementsByClassName('category-select')];
+		selectList.forEach((select) => {
+			select.innerHTML = '';
+			for(let category of categories) {
+				let option = document.createElement('option');
+				option.appendChild( document.createTextNode(category.name) );
+				option.value = category.name;
+				select.appendChild(option);
+			}
+		})
 	})
 }
 
-function getDomainData() {
-	return {
-		domain: document.getElementById("domain").value,
-		category: document.getElementById("category-select").value,
-		enabled: "true"
+function getDomainDataFor(action) {
+	let data = {
+		domain: getElementById(`domain-to-${action}`).value,
+		category: getElementById(`${action}-domain-category-select`).value,
+		enabled: true
 	}
+
+	if(action === 'edit') {
+		data['oldDomain'] = getElementById(`domain-to-${action}`).getAttribute('data-old-domain');
+	}
+
+	return data;
 }
 
-function getCategoryData() {
-	return {
-		name: document.getElementById("category-name").value,
-		color: document.getElementById("category-color").value,
-		icon: document.getElementById("category-icon").value,
-		enabled: "true"
-	}
+function resetDomainsModalFor(action) {
+	getElementById(`domain-to-${action}`).value = '';
+	getElementById(`${action}-domain-category-select`).value = '';
 }
 
+
+function setDomainDataToModalFor(action, data) {
+	getElementById(`domain-to-${action}`).value = data.domain;
+	getElementById(`domain-to-${action}`).setAttribute('data-old-domain',  data.domain);
+	getElementById(`${action}-domain-category-select`).value = data.category;
+}
+
+function getCategoryDataFor(action) {
+	let data = {
+		name: getElementById(`${action}-category-name`).value,
+		color: getElementById(`${action}-category-color`).value,
+		icon: getElementById(`${action}-category-icon`).value,
+		enabled: true
+	}
+
+	if(action === 'edit') {
+		data['oldCategoryName'] = getElementById(`${action}-category-name`).getAttribute('data-old-category-name');
+	}
+
+	return data;
+}
+
+function setCategoryDataToModalFor(action, data) {
+	getElementById(`${action}-category-name`).value = data.name;
+	getElementById(`${action}-category-name`).setAttribute('data-old-category-name',  data.name);
+	getElementById(`${action}-category-color`).value = data.color;
+	getElementById(`${action}-category-icon`).value = data.icon;
+}
+
+function resetCategoryModalFor(action) {
+	getElementById(`${action}-category-name`).value = '';
+	getElementById(`${action}-category-color`).value = '';
+	getElementById(`${action}-category-icon`).value = '';
+}
 
 function createDomainsTable() {
 	const table = new DataTable(".domains-table", {
@@ -58,7 +113,7 @@ function createDomainsTable() {
 	return function () {
 		getDomains().then(domains => {
 			if (!domains.length) {
-				return
+				table.rows().remove('all');
 			}
 			const newData = {
 				headings: ["Domains", "Category", "Enabled", "Actions"],
@@ -70,7 +125,7 @@ function createDomainsTable() {
 			}
 			table.rows().remove('all');
 			table.insert(newData);
-
+			addDomainsActionButtonsEventListener();
 		});
 	}
 }
@@ -85,7 +140,7 @@ function createCategoriesTable() {
 	return function () {
 		getCategories().then(categories => {
 			if (!categories.length) {
-				return
+				table.rows().remove('all');
 			}
 			const newData = {
 				headings: ["Name", "Color", "Icon", "Enabled", "Actions"],
@@ -97,6 +152,7 @@ function createCategoriesTable() {
 			}
 			table.rows().remove('all');
 			table.insert(newData);
+			addCategoriesActionButtonsEventListener();
 		});
 	}
 }
@@ -120,7 +176,36 @@ function createNewDomain(domainData) {
 			showDomainAlreadyExistsError(domainData):
 			domains.push(domainData);
 
-		saveDomains(domains).then(() => updateDomainsTable());
+		saveDomains(domains).then(() => {
+			updateDomainsTable();
+			resetDomainsModalFor('add');
+		});
+	})
+}
+
+function editDomain(domainData) {
+	getDomains().then((domains) => {
+		domains = domains.filter((domain) => domain.domain !== domainData.oldDomain)
+		delete domainData.oldDomain;
+		domains.push(domainData);
+
+		saveDomains(domains).then(() => {
+			updateDomainsTable();
+			resetDomainsModalFor('edit');
+		});
+	})
+}
+
+function deleteDomain(domainData) {
+	getDomains().then((domains) => {
+		console.log(domains)
+		domains = domains.filter((domain) => domain.domain !== domainData.domain)
+		console.log(domains)
+
+		saveDomains(domains).then(() => {
+			updateDomainsTable();
+			resetDomainsModalFor('delete');
+		});
 	})
 }
 
@@ -133,28 +218,126 @@ function createNewCategory(categoryData) {
 		saveCategories(categories).then(() => {
 			updateCategoriesTable();
 			addCategorySelectOptions();
+			resetCategoryModalFor('add');
 		});
 	})
+}
+
+function editCategory(categoryData) {
+	getCategories().then((categories) => {
+		categories = categories.filter((category) => category.name !== categoryData.oldCategoryName)
+		categories.push(categoryData);
+
+		saveCategories(categories).then(() => {
+			updateCategoriesTable();
+			addCategorySelectOptions();
+			resetCategoryModalFor('edit');
+		});
+	})
+}
+
+function deleteCategory(categoryData) {
+	getCategories().then((categories) => {
+		console.log(categories, categoryData)
+		categories = categories.filter((category) => category.name !== categoryData.name)
+		console.log(categories, categoryData)
+
+		saveCategories(categories).then(() => {
+			updateCategoriesTable();
+			resetCategoryModalFor('delete');
+		});
+	})
+}
+
+function addDomainsActionButtonsEventListener() {
+	[...getElementsByClassName("edit-domain")].forEach( element => {
+		element.addEventListener("click", (e) => {
+			const target = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
+			const domainData = {
+				domain: target.getAttribute('data-domain-name'),
+				category: target.getAttribute('data-domain-category')
+			}
+			setDomainDataToModalFor('edit', domainData);
+		});
+	});
+	[...getElementsByClassName("delete-domain")].forEach( element => {
+		element.addEventListener("click", (e) => {
+			const target = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
+			const domainData = {
+				domain: target.getAttribute('data-domain-name'),
+				category: target.getAttribute('data-domain-category')
+			}
+			console.log(target, domainData)
+			setDomainDataToModalFor('delete', domainData);
+		});
+	});
+}
+
+function addCategoriesActionButtonsEventListener() {
+	[...getElementsByClassName("edit-category")].forEach( element => {
+		element.addEventListener("click", (e) => {
+			const target = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
+			const categoryData = {
+				name: target.getAttribute('data-category-name'),
+				color: target.getAttribute('data-category-color'),
+				icon: target.getAttribute('data-category-icon'),
+			}
+			setCategoryDataToModalFor('edit', categoryData);
+		});
+	});
+	[...getElementsByClassName("delete-category")].forEach( element => {
+		element.addEventListener("click", (e) => {
+			const target = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
+			const categoryData = {
+				name: target.getAttribute('data-category-name'),
+				color: target.getAttribute('data-category-color'),
+				icon: target.getAttribute('data-category-icon'),
+			}
+			setCategoryDataToModalFor('delete', categoryData);
+		});
+	});
 }
 
 function updateTables() {
 	updateDomainsTable();
 	updateCategoriesTable();
 }
-updateTables()
-document.getElementById("add-domain-to-block").addEventListener("click", (e) => {
-	addCategorySelectOptions();
-});
 
-document.getElementById("add-domain").addEventListener("click", (e) => {
-	const domainData = getDomainData();
+updateTables()
+
+addCategorySelectOptions();
+
+getElementById("save-domain").addEventListener("click", (e) => {
+	const domainData = getDomainDataFor('add');
 	createNewDomain(domainData)
 });
 
-document.getElementById("add-category").addEventListener("click", (e) => {
-	const categoryData = getCategoryData();
+getElementById("save-edited-domain").addEventListener("click", (e) => {
+	const domainData = getDomainDataFor('edit');
+	editDomain(domainData)
+});
+
+getElementById("delete-domain").addEventListener("click", (e) => {
+	const domainData = getDomainDataFor('delete');
+	deleteDomain(domainData)
+});
+
+getElementById("save-category").addEventListener("click", (e) => {
+	const categoryData = getCategoryDataFor('add');
 	createNewCategory(categoryData)
 });
 
 
+getElementById("save-edited-category").addEventListener("click", (e) => {
+	const categoryData = getCategoryDataFor('edit');
+	editCategory(categoryData)
+});
+
+getElementById("delete-category").addEventListener("click", (e) => {
+	const categoryData = getCategoryDataFor('delete');
+	deleteCategory(categoryData)
+});
+
+
 //saveDomains([])
+//saveCategories([])
