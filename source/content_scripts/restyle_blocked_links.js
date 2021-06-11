@@ -13,73 +13,64 @@ function showDialog(url){
       </div>
     `
   document.body.append(div);
+  document.querySelector(".domainblocker__dialog > .domainblocker__buttons > a").onclick = () => {
+    document.body.removeChild(div);
+  }
   document.querySelector(".domainblocker__dialog > .domainblocker__buttons > button").onclick = () => {
     document.body.removeChild(div);
   }
 }
 
+function blockLink(domains, node) {
+  if (node.nodeName === "A") {
+    let url = new URL(node.href);
+    if(url.hostname == "" || url.hostname.endsWith(window.location.hostname)){
+      return;
+    }
 
-getDomainsFull().then(domains=>{
-  function blockLink(node) {
-    if (node.nodeName === "A") {
-      let url = new URL(node.href);
-      if(url.hostname == "" || url.hostname.endsWith(window.location.hostname)){
-        return;
-      }
+    let d = domains.find(dom => dom && dom.domain && url.hostname.endsWith(dom.domain));
+    if(!d) return;
+    if(!node.classList.contains('domainblocker__blocked')){
+      node.classList.add('domainblocker__blocked');
+      node.onclick = function(e){
+        e.preventDefault();
+        showDialog(node.href); 
+        return false;
+      };
+      let color = d.color;
+      let icon = d.icon;
 
-      let d = domains.find(dom => dom && dom.domain && url.hostname.endsWith(dom.domain));
-      if(!d) return;
-      console.log([d.domain, url.hostname])
-      if(!node.classList.contains('domainblocker__blocked')){
-        node.classList.add('domainblocker__blocked');
-        node.onclick = function(e){
-          e.preventDefault();
-          showDialog(node.href); 
-          return false;
-        };
-        let color = d.color || "#000000";
-        let icon = d.icon || "circle-xmark";
-
-        styles = `;
+      styles = `;
           background: ${tinycolor(color).lighten(40).setAlpha(.7).toRgbString()};
           border-right: 4px solid ${tinycolor(color).darken(20).toHexString()};
           border-left: 4px solid ${tinycolor(color).darken(20).toHexString()};
           color: ${tinycolor(color).darken(30).toHexString()};
           padding: 0 10px;
-          `;
+        `;
 
-        node.style += styles;
-        node.innerHTML = `<svg class="domainblocker__icon">
+      node.style += styles;
+      node.innerHTML = `<svg class="domainblocker__icon">
           <use xlink:href="${browser.extension.getURL("./static/solid.svg")}#${icon}" fill="currentColor"></use>
         </svg>` + node.innerHTML;
-
-      }
     }
   }
+}
+getDomainsFull().then(domains=>{
+  for(let element of document.getElementsByTagName('a')){
+    blockLink(domains, element);
+  };
+});
 
-// Start the recursion from the body tag.
-for(let element of document.getElementsByTagName('a')){
-blockLink(element);
-};
-
-
-// Now monitor the DOM for additions and substitute emoji into new nodes.
-// @see https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver.
 const observer = new MutationObserver((mutations) => {
-mutations.forEach((mutation) => {
-if (mutation.addedNodes && mutation.addedNodes.length > 0) {
-// This DOM change was new nodes being added. Run our substitution
-        // algorithm on each newly added node.
-        for (let i = 0; i < mutation.addedNodes.length; i++) {
-          const newNode = mutation.addedNodes[i];
-          replaceText(newNode);
-        }
-      }
+  getDomainsFull().then(domains=>{
+    mutations.forEach((mutation) => {
+      blockLink(domains, mutation.target);
     });
   });
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
-})
-
+});
+observer.observe(document.body, {
+  childList: true,
+  subtree: true,
+  attributes: true,
+  attributeFilter: ["href"]
+});
