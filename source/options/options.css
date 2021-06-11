@@ -30,9 +30,13 @@ h1{
 	font-family: 'Open Sans Condensed';
 }
 
-#add-domain-to-block, #add-new-category{
+#add-domain-to-block, #add-category{
 	margin: 10px 0px 10px 0px;
 	float: right;
+}
+
+#form-control {
+	height: 40px;
 }
 
 .categories-table, .domains-table{
