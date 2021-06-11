@@ -1,6 +1,7 @@
 import {getDomainsFull} from "../options/storage"
 import tinycolor from "tinycolor2"
 
+console.log("asd")
 function showDialog(url){
   let div = document.createElement('div');
   div.classList.add('domainblocker__dialog')
@@ -45,16 +46,31 @@ function blockLink(domains, node) {
           border-right: 4px solid ${tinycolor(color).darken(20).toHexString()};
           border-left: 4px solid ${tinycolor(color).darken(20).toHexString()};
           color: ${tinycolor(color).darken(30).toHexString()};
-          padding: 0 10px;
-        `;
+          padding: 0 10px;`;
 
       node.style += styles;
+      let icon_svg = "";
+      let icon_type, icon = icon.split(" ");
+      switch (icon_type) {
+        case 'fab':
+          icon_svg = './static/brands.svg';
+          break;
+        case 'far':
+          icon_svg = './static/regular.svg';
+          break;
+        case 'fas':
+          icon_svg = './static/solid.svg';
+          break;
+        default:
+          break;
+      }
       node.innerHTML = `<svg class="domainblocker__icon">
-          <use xlink:href="${browser.extension.getURL("./static/solid.svg")}#${icon}" fill="currentColor"></use>
-        </svg>` + node.innerHTML;
+          <use xlink:href="${browser.extension.getURL(icon_svg)}#${icon}" fill="currentColor"></use>
+      </svg>` + node.innerHTML;
     }
   }
 }
+    console.log();
 getDomainsFull().then(domains=>{
   for(let element of document.getElementsByTagName('a')){
     blockLink(domains, element);
@@ -74,3 +90,4 @@ observer.observe(document.body, {
   attributes: true,
   attributeFilter: ["href"]
 });
+

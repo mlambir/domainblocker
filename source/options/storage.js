@@ -38,14 +38,14 @@ export function getDomainsFull(){
       categories[category.name] = category;
     }
     return res.domains.map(d=>{
-      if(!d.enabled){
-        return null;
-      }
+      // if(!d.enabled){
+      //   return null;
+      // }
       let category = categories[d.category];
       if(category){
-        if(!category.enabled){
-          return null;
-        }
+        // if(!category.enabled){
+        //   return null;
+        // }
         d.color = category.color;
         d.icon = category.icon;
       }else{
