@@ -24,6 +24,7 @@
 	},
   "content_scripts": [
     {
+      "run_at": "document_end",
       "matches": ["<all_urls>"],
       "js": ["./content_scripts/restyle_blocked_links.js"],
       "css": ["./content_scripts/blocked_links.css"]
