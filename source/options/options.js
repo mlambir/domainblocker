@@ -10,7 +10,8 @@ function getElementsByClassName(className) {
 
 function getActionButtonForDomain(domain) {
 	return  `<div>
-				<button data-domain-name="${domain.domain}" data-domain-category="${domain.category}" class="btn btn-light edit-domain"
+				<button data-domain-name="${domain.domain}" data-domain-category="${domain.category}" data-domain-enabled="${domain.enabled}" class="btn btn-light edit-domain"
+				<button data-domain-name="${domain.domain}" data-domain-category="${domain.category}" data-domain-enabled="${domain.enabled}" class="btn btn-light edit-domain"
 				 data-bs-toggle="modal" data-bs-target="#edit-domain-modal">
 				 	<i class="fa fa-pencil-alt"></i>
 				 </button>
@@ -23,7 +24,7 @@ function getActionButtonForDomain(domain) {
 
 function getActionButtonForCategory(category) {
 	return  `<div>
-				<button data-category-name="${category.name}" data-category-color="${category.color}" data-category-icon="${category.icon}" class="btn btn-light edit-category"
+				<button data-category-name="${category.name}" data-category-color="${category.color}" data-category-icon="${category.icon}" data-category-enabled="${category.enabled}" class="btn btn-light edit-category"
 				 data-bs-toggle="modal" data-bs-target="#edit-category-modal">
 					<i class="fa fa-pencil-alt"></i>
 				</button>
@@ -53,11 +54,11 @@ function getDomainDataFor(action) {
 	let data = {
 		domain: getElementById(`domain-to-${action}`).value,
 		category: getElementById(`${action}-domain-category-select`).value,
-		enabled: true
 	}
 
 	if(action === 'edit') {
-		data['oldDomain'] = getElementById(`domain-to-${action}`).getAttribute('data-old-domain');
+		data.oldDomain = getElementById(`domain-to-${action}`).getAttribute('data-old-domain');
+		data.enabled = getElementById(`${action}-domain-enabled`).value === "true";
 	}
 
 	return data;
@@ -73,6 +74,7 @@ function setDomainDataToModalFor(action, data) {
 	getElementById(`domain-to-${action}`).value = data.domain;
 	getElementById(`domain-to-${action}`).setAttribute('data-old-domain',  data.domain);
 	getElementById(`${action}-domain-category-select`).value = data.category;
+	getElementById(`${action}-domain-enabled`).value = data.enabled;
 }
 
 function getCategoryDataFor(action) {
@@ -80,13 +82,12 @@ function getCategoryDataFor(action) {
 		name: getElementById(`${action}-category-name`).value,
 		color: getElementById(`${action}-category-color`).value,
 		icon: getElementById(`${action}-category-icon`).value,
-		enabled: true
 	}
 
 	if(action === 'edit') {
-		data['oldCategoryName'] = getElementById(`${action}-category-name`).getAttribute('data-old-category-name');
+		data.oldCategoryName = getElementById(`${action}-category-name`).getAttribute('data-old-category-name');
+		data.enabled = getElementById(`${action}-category-enabled`).value === "true";
 	}
-
 	return data;
 }
 
@@ -95,6 +96,7 @@ function setCategoryDataToModalFor(action, data) {
 	getElementById(`${action}-category-name`).setAttribute('data-old-category-name',  data.name);
 	getElementById(`${action}-category-color`).value = data.color;
 	getElementById(`${action}-category-icon`).value = data.icon;
+	getElementById(`${action}-category-enabled`).value = data.enabled;
 }
 
 function resetCategoryModalFor(action) {
@@ -119,6 +121,7 @@ function createDomainsTable() {
 				headings: ["Domains", "Category", "Enabled", "Actions"],
 				data: domains.map(domain => {
 					let rowData = Object.values(domain);
+					rowData[2] = rowData[2] ? 'Yes' : 'No';
 					rowData.push(getActionButtonForDomain(domain));
 					return rowData;
 				})
@@ -146,6 +149,7 @@ function createCategoriesTable() {
 				headings: ["Name", "Color", "Icon", "Enabled", "Actions"],
 				data: categories.map(category => {
 					let rowData = Object.values(category);
+					rowData[3] = rowData[3] ? 'Yes' : 'No';
 					rowData.push(getActionButtonForCategory(category));
 					return rowData;
 				})
@@ -198,9 +202,7 @@ function editDomain(domainData) {
 
 function deleteDomain(domainData) {
 	getDomains().then((domains) => {
-		console.log(domains)
 		domains = domains.filter((domain) => domain.domain !== domainData.domain)
-		console.log(domains)
 
 		saveDomains(domains).then(() => {
 			updateDomainsTable();
@@ -225,7 +227,8 @@ function createNewCategory(categoryData) {
 
 function editCategory(categoryData) {
 	getCategories().then((categories) => {
-		categories = categories.filter((category) => category.name !== categoryData.oldCategoryName)
+		categories = categories.filter((category) => category.name !== categoryData.oldCategoryName);
+		delete categoryData.oldCategoryName;
 		categories.push(categoryData);
 
 		saveCategories(categories).then(() => {
@@ -238,9 +241,7 @@ function editCategory(categoryData) {
 
 function deleteCategory(categoryData) {
 	getCategories().then((categories) => {
-		console.log(categories, categoryData)
 		categories = categories.filter((category) => category.name !== categoryData.name)
-		console.log(categories, categoryData)
 
 		saveCategories(categories).then(() => {
 			updateCategoriesTable();
@@ -255,7 +256,8 @@ function addDomainsActionButtonsEventListener() {
 			const target = e.target.tagName === 'BUTTON' ? e.target : e.target.parentNode;
 			const domainData = {
 				domain: target.getAttribute('data-domain-name'),
-				category: target.getAttribute('data-domain-category')
+				category: target.getAttribute('data-domain-category'),
+				enabled: target.getAttribute('data-domain-enabled')
 			}
 			setDomainDataToModalFor('edit', domainData);
 		});
@@ -267,7 +269,6 @@ function addDomainsActionButtonsEventListener() {
 				domain: target.getAttribute('data-domain-name'),
 				category: target.getAttribute('data-domain-category')
 			}
-			console.log(target, domainData)
 			setDomainDataToModalFor('delete', domainData);
 		});
 	});
@@ -281,6 +282,7 @@ function addCategoriesActionButtonsEventListener() {
 				name: target.getAttribute('data-category-name'),
 				color: target.getAttribute('data-category-color'),
 				icon: target.getAttribute('data-category-icon'),
+				enabled: target.getAttribute('data-category-enabled'),
 			}
 			setCategoryDataToModalFor('edit', categoryData);
 		});
@@ -338,17 +340,6 @@ getElementById("delete-category").addEventListener("click", (e) => {
 	deleteCategory(categoryData)
 });
 
-// Default options
-IconPicker.Init({
-	// Required: You have to set the path of IconPicker JSON file to "jsonUrl" option. e.g. '/content/plugins/IconPicker/dist/iconpicker-1.5.0.json'
-	jsonUrl: browser.extension.getURL("./static/iconpicker-1.5.0.json"),
-	// Optional: Change the buttons or search placeholder text according to the language.
-	searchPlaceholder: 'Search Icon',
-	showAllButton: 'Show All',
-	cancelButton: 'Cancel',
-	noResultsFound: 'No results found.', // v1.5.0 and the next versions
-	borderRadius: '20px', // v1.5.0 and the next versions
-});
 
 //saveDomains([])
 //saveCategories([])

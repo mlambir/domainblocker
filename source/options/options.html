@@ -13,10 +13,6 @@
 		<div class="d-flex justify-content-between">
 			<h1>Domain Blocker</h1>
 		</div>
-
-		<button type="button" id="GetIconPicker" data-iconpicker-input="input#IconInput" data-iconpicker-preview="i#IconPreview">Select Icon</button>
-
-
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
 			<li class="nav-item" role="presentation">
 				<button class="nav-link active" id="domains-tab" data-bs-toggle="tab" data-bs-target="#domains" type="button"
@@ -68,7 +64,6 @@
 									<select id="add-domain-category-select" class="form-control category-select"></select>
 								</label>
 								<button type="button" id="new-category-for-domain" class="btn btn-light"
-										onclick="openFaSelector(this,event)" id="fa-selector"
 										data-bs-toggle="modal" data-bs-target="#add-category-modal">
 									<i class="fa fa-plus"></i>
 								</button>
@@ -104,6 +99,10 @@
 								<button type="button" id="new-category-for-domain" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#add-category-modal">
 									<i class="fa fa-plus"></i>
 								</button>
+								<select id="edit-domain-enabled" class="form-control" aria-label="Default select example">
+									<option value="true">Yes</option>
+									<option value="false">No</option>
+								</select>
 							</form>
 						</div>
 					</div>
@@ -195,6 +194,10 @@
 								<label class="form-label"> Icon
 									<input id="edit-category-icon" class="form-control">
 								</label>
+								<select id="edit-category-enabled" class="form-control" aria-label="Default select example">
+									<option value="true">Yes</option>
+									<option value="false">No</option>
+								</select>
 							</form>
 						</div>
 					</div>
