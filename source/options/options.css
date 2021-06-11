@@ -39,7 +39,7 @@ h1{
 	height: 40px;
 }
 
-#edit-category-enabled{
+#edit-category-enabled, #edit-domain-enabled{
 	width: 70px;
 }
 
